@@ -5,6 +5,7 @@ class CURLTiming
     public $info;
     public $curl;
     public $url;
+
     public function execute($curl, $url)
     {
         $this->url = $url;
@@ -42,4 +43,28 @@ EOD;
 
 }
 
-;
+function toCSV($curl, string $url = "")
+{
+    $info = curl_getinfo($curl);
+    //print_r($info);
+    $errno = curl_errno($curl);
+    $date = new DateTime(); //now
+    $now = $date->format('Y-m-d H:i:s');
+    return <<<EOD
+---------------------------------
+$now    /   CurlCode = $errno   /   HttpCode = {$info["http_code"]}
+RQ URL: $url    /   Effective URL:  {$info["url"]}
+TotalTime = {$info["total_time"]}
+PreTransfer = {$info["pretransfer_time"]}
+
+EOD;
+}
+
+
+/*
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_URL, "https://seisho.us");
+$result = curl_exec($ch);
+echo toCSV($ch,"seisho.us");
+*/
